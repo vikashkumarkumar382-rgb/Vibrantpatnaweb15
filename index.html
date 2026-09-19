@@ -931,7 +931,17 @@ body{background:var(--vp-cream)}
 }
 .course-buy-cta:active{transform:scale(.98)}
 .course-payment{
-  min-height:2px;
+  min-height:60px;
+  scroll-margin-top:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+}
+.course-payment form{
+  width:100%;
+  display:flex;
+  justify-content:center;
 }
 @media (max-width:600px){
   .course-buy-cta{
@@ -1977,17 +1987,7 @@ body{overflow-x:hidden}
   <span>↗</span> Grow on Instagram 🚀
 </button>
 
-<script id="vibrantpatna-buy-button-script-v5">
-(function(){
-  const buy = document.getElementById('courseBuyNow');
-  const checkout = document.getElementById('razorpay-checkout');
-  if(!buy || !checkout) return;
-  buy.addEventListener('click', function(e){
-    e.preventDefault();
-    checkout.scrollIntoView({behavior:'smooth', block:'center'});
-  });
-})();
-</script>
+<!-- The CTA uses the native anchor link to reliably scroll to Razorpay checkout. -->
 
 
 <script id="vibrantpatna-mobile-menu-v5">
