@@ -1977,35 +1977,14 @@ body{overflow-x:hidden}
   <span>↗</span> Grow on Instagram 🚀
 </button>
 
-<script id="vibrantpatna-buy-button-script-v4">
+<script id="vibrantpatna-buy-button-script-v5">
 (function(){
   const buy = document.getElementById('courseBuyNow');
   const checkout = document.getElementById('razorpay-checkout');
   if(!buy || !checkout) return;
-
   buy.addEventListener('click', function(e){
     e.preventDefault();
-
-    // Give Razorpay a moment to finish injecting its payment control.
-    const tryOpen = () => {
-      const form = checkout.querySelector('form');
-      const native = form && form.querySelector(
-        'button, input[type="submit"], input[type="button"]'
-      );
-
-      if(native){
-        native.click();
-        return true;
-      }
-
-      checkout.scrollIntoView({behavior:'smooth', block:'center'});
-      return false;
-    };
-
-    if(!tryOpen()){
-      setTimeout(tryOpen, 500);
-      setTimeout(tryOpen, 1500);
-    }
+    checkout.scrollIntoView({behavior:'smooth', block:'center'});
   });
 })();
 </script>
