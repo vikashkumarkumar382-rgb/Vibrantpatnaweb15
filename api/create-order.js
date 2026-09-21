@@ -1,9 +1,10 @@
-
 const Razorpay = require("razorpay");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
   }
 
   try {
@@ -18,10 +19,19 @@ module.exports = async (req, res) => {
       receipt: `ebook_${Date.now()}`
     });
 
-    return res.status(200).json(order);
+    return res.status(200).json({
+      id: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: process.env.RAZORPAY_KEY_ID
+    });
+
   } catch (error) {
+    console.error("Razorpay error:", error);
+
     return res.status(500).json({
-      error: "Unable to create order"
+      error: "Unable to create order",
+      details: error.message || "Unknown error"
     });
   }
 };
