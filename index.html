@@ -1664,17 +1664,97 @@ nav .container .logo .vp-logo-word .vp-patna{
             <div class="course-price">₹499</div>
           </div>
           <div class="course-note">One-time payment • Lifetime access<br/>75-page illustrated ebook • Secure Razorpay checkout</div>
-          <a href="https://rzp.io/rzp/FwxgvZO" class="course-buy-cta" id="courseBuyNow" target="_blank" rel="noopener noreferrer">
-            🛒 Get Instant Access — ₹499 <span>→</span>
-          </a>
-          <div class="course-payment" id="razorpay-checkout" style="display:none;" aria-hidden="true">
-            <form>
-              <script src="https://checkout.razorpay.com/v1/payment-button.js"
-                data-payment_button_id="pl_TcL6ujYgnr9il4"
-                async>
-              </script>
-            </form>
+          <form id="customerDetailsForm" style="display:grid;gap:10px;margin:14px 0 12px;text-align:left;">
+            <label for="customerName" style="font-size:13px;font-weight:700;">Full name</label>
+            <input id="customerName" name="customerName" type="text" autocomplete="name" required placeholder="Your full name" style="width:100%;padding:12px;border:1px solid #d7d7d7;border-radius:10px;box-sizing:border-box;font:inherit;">
+            <label for="customerEmail" style="font-size:13px;font-weight:700;">Email address</label>
+            <input id="customerEmail" name="customerEmail" type="email" autocomplete="email" required placeholder="you@example.com" style="width:100%;padding:12px;border:1px solid #d7d7d7;border-radius:10px;box-sizing:border-box;font:inherit;">
+            <button type="submit" class="course-buy-cta" id="courseBuyNow">
+              🛒 Get Instant Access — ₹499 <span>→</span>
+            </button>
+          </form>
+          <div class="course-payment" id="razorpay-checkout" style="display:none">
+            <div id="paymentStatus" role="status" aria-live="polite"></div>
           </div>
+          <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+          <script>
+          (function(){
+            const detailsForm = document.getElementById('customerDetailsForm');
+            const buyBtn = document.getElementById('courseBuyNow');
+            const statusBox = document.getElementById('paymentStatus');
+            if(!buyBtn) return;
+            const setStatus = (msg) => { if(statusBox) statusBox.textContent = msg; };
+            detailsForm.addEventListener('submit', async function(event){
+              event.preventDefault();
+              if(buyBtn.disabled) return;
+              const customerName = document.getElementById('customerName').value.trim();
+              const customerEmail = document.getElementById('customerEmail').value.trim();
+              if(!customerName || !customerEmail || !detailsForm.checkValidity()) {
+                detailsForm.reportValidity();
+                return;
+              }
+              buyBtn.disabled = true;
+              setStatus('Opening secure checkout…');
+              try {
+                const orderResponse = await fetch('/api/create-order', {
+                  method:'POST',
+                  headers:{'Content-Type':'application/json'},
+                  body:JSON.stringify({product:'instagram-mastery', customerName, customerEmail})
+                });
+                const order = await orderResponse.json();
+                if(!orderResponse.ok || !order.id || !order.keyId){
+                  throw new Error(order.error || 'Unable to start payment');
+                }
+                const options = {
+                  key: order.keyId,
+                  amount: order.amount,
+                  currency: order.currency,
+                  name: 'VibrantPatna',
+                  description: 'Instagram Mastery Course',
+                  order_id: order.id,
+                  prefill:{name:customerName, email:customerEmail},
+                  notes:{product:'instagram-mastery'},
+                  theme:{color:'#B5121B'},
+                  handler: async function(response){
+                    setStatus('Verifying payment…');
+                    try {
+                      const verifyResponse = await fetch('/api/verify-payment', {
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify(response)
+                      });
+                      const result = await verifyResponse.json();
+                      if(!verifyResponse.ok || !result.success || !result.downloadUrl){
+                        throw new Error(result.error || 'Payment verification failed');
+                      }
+                      setStatus('Payment successful. Opening your ebook…');
+                      window.location.href = result.downloadUrl;
+                    } catch(err) {
+                      buyBtn.disabled = false;
+                      setStatus(err.message || 'Payment verification failed. Please contact support.');
+                    }
+                  },
+                  modal:{
+                    ondismiss:function(){
+                      buyBtn.disabled = false;
+                      setStatus('Payment window closed. You can try again.');
+                    }
+                  }
+                };
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function(){
+                  buyBtn.disabled = false;
+                  setStatus('Payment failed or was cancelled. Please try again.');
+                });
+                rzp.open();
+              } catch(err) {
+                console.error(err);
+                buyBtn.disabled = false;
+                setStatus(err.message || 'Unable to start payment. Please try again.');
+              }
+            });
+          })();
+          </script>
           <div class="course-trust">🔒 Secure payment powered by Razorpay</div>
            <div class="course-delivery-note" role="note" aria-label="Secure ebook delivery">
              <strong>📩 Secure ebook delivery</strong><br/>
