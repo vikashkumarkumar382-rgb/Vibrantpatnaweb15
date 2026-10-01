@@ -3498,5 +3498,60 @@ a[href*="instagram"].grow-instagram::after,
 }
 </style>
 
+
+<style id="vibrantpatna-course-form-visibility-v10">
+/* Course checkout form readability fix.
+   These rules override the older theme label colors without changing
+   the form fields, validation, or payment JavaScript. */
+#customerDetailsForm > label{
+  display:block !important;
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  font-size:14px !important;
+  font-weight:850 !important;
+  letter-spacing:.2px !important;
+  text-transform:none !important;
+  text-shadow:0 0 8px rgba(255,255,255,.12) !important;
+  margin-bottom:2px !important;
+}
+
+#customerDetailsForm > label::before{
+  content:"" !important;
+}
+
+#customerDetailsForm > input{
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+  background:#090909 !important;
+  border:1px solid rgba(255,255,255,.28) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+#customerDetailsForm > input::placeholder{
+  color:#BDBDBD !important;
+  -webkit-text-fill-color:#BDBDBD !important;
+  opacity:1 !important;
+}
+
+#customerDetailsForm > input:focus{
+  outline:none !important;
+  border-color:#FF1238 !important;
+  box-shadow:
+    0 0 0 2px rgba(255,18,56,.16),
+    0 0 15px rgba(255,18,56,.20) !important;
+}
+
+@media(max-width:600px){
+  #customerDetailsForm > label{
+    font-size:14px !important;
+  }
+  #customerDetailsForm > input{
+    font-size:17px !important;
+  }
+}
+</style>
+
 </body>
 </html>
